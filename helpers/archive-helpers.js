@@ -1,6 +1,8 @@
 var fs = require('fs');
 var path = require('path');
 var _ = require('underscore');
+var header = require('../web/http-helpers');
+
 
 /*
  * You will need to reuse the same paths many times over in the course of this sprint.
@@ -49,7 +51,7 @@ exports.addUrlToList = function(newUrl){
   })
 };
 
-exports.isURLArchived = function(url){
+exports.isURLArchived = function(url, res){
   //use path from get request to see if the site has been archived
 
   var pathName = path.join(__dirname, '../archives/sites', url);
@@ -57,36 +59,19 @@ exports.isURLArchived = function(url){
   console.log("isURLArchived SEES THIS!!!!!" + pathName);
 
   var archivedSiteFound = false;
-  return fs.exists(pathName, function(exists){
-    // if !!exists, call the callback
 
-    return !!exists;
+  var getFile =  function() {
+    header.serveAssets(res, pathName, 5);
+  };
+
+  fs.exists(pathName, function(exists){
+    // if !!exists, call the callback
+    if (!!exists) {
+      getFile();
+    }
+
   });
 
-  // callback is equivalent to request-handler serveAssets function call
-
-
-
-  // var check = fs.readFile(pathName, function(err){
-
-  // });
-  // console.log("The CHECK IS THIS" + check)
-  // if(check === ''){
-  //   return false;
-  // }else{
-  //   return true;
-  // }
-
-  // if(5){//url IS archived
-  //   return true;
-  // }else{
-  //   if(!isUrlInList()){
-  //     addUrlToList(url);
-  //     return false;
-  //   }else{
-  //     return true;
-  //   }
-  // }
 };
 
 exports.downloadUrls = function(){

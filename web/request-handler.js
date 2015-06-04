@@ -14,10 +14,12 @@ exports.handleRequest = function (req, res) {
       if (req.url==='/index.html' || req.url==='/') {
         header.serveAssets(res, path.join(__dirname, '../web/public/index.html'), 5);
       }else{
-        // call archive.isURLArchived instead of an if statement
-        if(archive.isURLArchived(req.url)){
-          header.serveAssets(res, path.join(__dirname, '../archives/sites', pathName), 5);
-        }
+        archive.isURLArchived(req.url, res);
+
+        // // call archive.isURLArchived instead of an if statement
+        // if(archive.isURLArchived(req.url)){
+        //   header.serveAssets(res, path.join(__dirname, '../archives/sites', pathName), 5);
+        // }
       }
 
       statusCode = 200;
