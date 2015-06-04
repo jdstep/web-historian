@@ -26,16 +26,69 @@ exports.initialize = function(pathsObj){
 // modularize your code. Keep it clean!
 
 exports.readListOfUrls = function(){
+  fs.readFile(this.paths['list'], function(err){
+    if(err) throw err
+    console.log('Success!');
+  })
 };
 
-exports.isUrlInList = function(){
+exports.isUrlInList = function(url){
+  var searchList = readListofUrls();
+  if(searchList.contains(url)){
+    //do something
+  }
 };
 
-exports.addUrlToList = function(){
+exports.addUrlToList = function(newUrl){
+  //how are we recieving data (string, etc)
+  var list = [readListOfUrls()];
+  list.push(newUrl);
+  fs.writeFile(this.paths['list'], function(err){
+    if(err) throw err
+    console.log('Successssssesss!')
+  })
 };
 
-exports.isURLArchived = function(){
+exports.isURLArchived = function(url){
+  //use path from get request to see if the site has been archived
+
+  var pathName = path.join(__dirname, '../archives/sites', url);
+
+  console.log("isURLArchived SEES THIS!!!!!" + pathName);
+
+  var archivedSiteFound = false;
+  return fs.exists(pathName, function(exists){
+    // if !!exists, call the callback
+
+    return !!exists;
+  });
+
+  // callback is equivalent to request-handler serveAssets function call
+
+
+
+  // var check = fs.readFile(pathName, function(err){
+
+  // });
+  // console.log("The CHECK IS THIS" + check)
+  // if(check === ''){
+  //   return false;
+  // }else{
+  //   return true;
+  // }
+
+  // if(5){//url IS archived
+  //   return true;
+  // }else{
+  //   if(!isUrlInList()){
+  //     addUrlToList(url);
+  //     return false;
+  //   }else{
+  //     return true;
+  //   }
+  // }
 };
 
 exports.downloadUrls = function(){
 };
+
