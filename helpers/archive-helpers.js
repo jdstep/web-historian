@@ -27,27 +27,43 @@ exports.initialize = function(pathsObj){
 // The following function names are provided to you to suggest how you might
 // modularize your code. Keep it clean!
 
-exports.readListOfUrls = function(){
-  fs.readFile(this.paths['list'], function(err){
-    if(err) throw err
-    console.log('Success!');
-  })
+exports.readListOfUrls = function(url, res){
+  var holdUrl = url;
+  var pathName = path.join(__dirname, '../archives/sites.txt');
+  var context = this;
+  fs.readFile(pathName, {encoding: 'utf8'}, function(err, data){
+      var buffer = data.toString();
+      if(err){
+       throw err
+     }
+      context.isUrlInList(holdUrl, buffer, res);
+  });
 };
 
-exports.isUrlInList = function(url){
-  var searchList = readListofUrls();
-  if(searchList.contains(url)){
-    //do something
+exports.isUrlInList = function(url, buffer, res){
+  if(buffer.match(new RegExp(url))){
+   this.addUrlToList(url, res);
   }
 };
 
-exports.addUrlToList = function(newUrl){
+exports.addUrlToList = function(newUrl, res){
   //how are we recieving data (string, etc)
-  var list = [readListOfUrls()];
-  list.push(newUrl);
-  fs.writeFile(this.paths['list'], function(err){
+  var url = newUrl + '\n'
+  console.log("We are trying to append THIS to sites.txt" + newUrl);
+
+
+  var postFile = function(res){
+
+    header.serveAssets(res, path.join(__dirname, '../web/public/loading.html'), 5, 302);
+  }
+
+
+  var pathName = path.join(__dirname, '../archives/sites.txt');
+
+  console.log("About to call appendFile!");
+  fs.writeFile(this.paths.list, url, function(err, data){
     if(err) throw err
-    console.log('Successssssesss!')
+      postFile(res);
   })
 };
 
@@ -56,7 +72,6 @@ exports.isURLArchived = function(url, res){
 
   var pathName = path.join(__dirname, '../archives/sites', url);
 
-  console.log("isURLArchived SEES THIS!!!!!" + pathName);
 
   var archivedSiteFound = false;
 
@@ -65,9 +80,11 @@ exports.isURLArchived = function(url, res){
   };
 
   fs.exists(pathName, function(exists){
-    // if !!exists, call the callback
     if (!!exists) {
       getFile();
+    } else {
+      res.writeHead(404, header.headers);
+      res.end();
     }
 
   });

@@ -12,7 +12,7 @@ exports.handleRequest = function (req, res) {
       var pathName = req.url;
       // console.log("PATH NAME IS " + pathName)
       if (req.url==='/index.html' || req.url==='/') {
-        header.serveAssets(res, path.join(__dirname, '../web/public/index.html'), 5);
+        header.serveAssets(res, path.join(__dirname, '../web/public/index.html'), 5, 200);
       }else{
         archive.isURLArchived(req.url, res);
 
@@ -28,7 +28,8 @@ exports.handleRequest = function (req, res) {
       statusCode = 418; // teapot
       },
     'POST': function(req, res){
-      statusCode = 201;
+      statusCode = 302;
+      archive.readListOfUrls(req._postData.url, res);
       },
     'DELETE': function(req, res){
       statusCode = 402; // payment required
